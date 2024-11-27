@@ -4,9 +4,9 @@ use bevy::utils::HashMap;
 use bevy::window::PrimaryWindow;
 use rand::prelude::*;
 
-mod camera;
+mod view;
 
-use camera::spawn_camera;
+use view::spawn_camera;
 
 const NUMBER_OF_BOIDS: usize = 200;
 const BOID_SIZE_SCALE: f32 = 5.;
@@ -155,7 +155,7 @@ fn move_boids(
 
         if neighboring_boids > 0. {
             pos_avg /= neighboring_boids;
-            vel_avg = vel_avg / neighboring_boids;
+            vel_avg /= neighboring_boids;
 
             new_velocity += new_velocity
                 + (pos_avg - boid_a_transform.translation) * CENTERING_FACTOR
@@ -202,13 +202,8 @@ fn move_boids(
     }
 }
 
-#[derive(Resource, Debug)]
+#[derive(Resource, Debug, Default)]
 pub struct RunSimulation(bool);
-impl Default for RunSimulation {
-    fn default() -> Self {
-        Self(false)
-    }
-}
 
 pub fn start_stop(
     keyboard_input: Res<ButtonInput<KeyCode>>,
