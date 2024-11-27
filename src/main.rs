@@ -19,7 +19,7 @@ const RIGHT_MARGIN: f32 = 75.;
 const TOP_MARGIN: f32 = 75.;
 const BOTTOM_MARGIN: f32 = 75.;
 
-const TURN_FACTOR: f32 = 1.;
+const TURN_FACTOR: f32 = 0.5;
 const VISUAL_RANGE: f32 = 80.;
 const VISUAL_RANGE_SQUARED: f32 = VISUAL_RANGE * VISUAL_RANGE;
 const PROTECTED_RANGE: f32 = 20.;
@@ -42,7 +42,6 @@ fn main() {
 pub struct Boid {
     vx: f32,
     vy: f32,
-    angle: f32,
 }
 
 fn spawn_boids(
@@ -76,7 +75,6 @@ fn spawn_boids(
                 Boid {
                     vx: -random_rotation.sin(),
                     vy: random_rotation.cos(),
-                    angle: random_rotation,
                 },
             ))
             .with_children(|parent| {
@@ -209,13 +207,6 @@ fn move_boids(
         boid.vx = movement_vector.x;
         boid.vy = movement_vector.y;
 
-        let previous_direction = Vec3::new(-boid.angle.sin(), boid.angle.cos(), 0.);
-        let change_in_angle = movement_vector.angle_between(previous_direction);
-
-        if change_in_angle > 0.01 {
-            boid.angle += change_in_angle;
-            boid.angle %= std::f32::consts::TAU;
-            boid_transform.rotate(Quat::from_rotation_z(change_in_angle));
-        }
+        boid_transform.rotation = Quat::from_rotation_arc(Vec3::Y, movement_vector.normalize());
     }
 }
