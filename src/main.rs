@@ -9,8 +9,9 @@ mod camera;
 use camera::spawn_camera;
 
 const NUMBER_OF_BOIDS: usize = 200;
-const BOID_HEIGHT: f32 = 30.;
-const BOID_WIDTH: f32 = 20.;
+const BOID_SIZE_SCALE: f32 = 5.;
+const BOID_HEIGHT: f32 = 3. * BOID_SIZE_SCALE;
+const BOID_WIDTH: f32 = 2. * BOID_SIZE_SCALE;
 const BOID_VIEW_ANGLE_RAD: f32 = std::f32::consts::PI * 3. / 4.;
 const SHOW_VIEW_CONE: bool = false;
 
