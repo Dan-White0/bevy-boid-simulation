@@ -43,8 +43,7 @@ fn main() {
 
 #[derive(Component)]
 pub struct Boid {
-    vx: f32,
-    vy: f32,
+    velocity: Vec3,
 }
 
 fn spawn_boids(
@@ -76,8 +75,7 @@ fn spawn_boids(
                     ..default()
                 },
                 Boid {
-                    vx: -random_rotation.sin(),
-                    vy: random_rotation.cos(),
+                    velocity: Vec3::new(-random_rotation.sin(), random_rotation.cos(), 0.),
                 },
             ))
             .with_children(|parent| {
@@ -126,74 +124,60 @@ fn move_boids(
     let mut movement_vectors: HashMap<Entity, Vec3> = HashMap::new();
 
     for (boid_a_transform, boid_a_entity, boid_a) in boid_query.iter() {
-        let mut xpos_avg = 0.;
-        let mut ypos_avg = 0.;
-        let mut xvel_avg = 0.;
-        let mut yvel_avg = 0.;
+        let mut pos_avg = Vec3::ZERO;
+        let mut vel_avg = Vec3::ZERO;
+        let mut close_distance = Vec3::ZERO;
+
         let mut neighboring_boids = 0.;
-        let mut close_dx = 0.;
-        let mut close_dy = 0.;
 
         for (boid_b_transform, boid_b_entity, boid_b) in boid_query.iter() {
             if boid_a_entity == boid_b_entity {
                 continue;
             }
 
-            let dx = boid_a_transform.translation.x - boid_b_transform.translation.x;
-            let dy = boid_a_transform.translation.y - boid_b_transform.translation.y;
+            let vector_between = boid_a_transform.translation - boid_b_transform.translation;
 
-            if dx.abs() < VISUAL_RANGE && dy.abs() < VISUAL_RANGE {
-                let squared_distance = dx * dx + dy * dy;
+            if vector_between.x.abs() < VISUAL_RANGE && vector_between.y.abs() < VISUAL_RANGE {
+                let squared_distance = vector_between.distance_squared(Vec3::ZERO);
 
                 if squared_distance < PROTECTED_RANGE_SQUARED {
-                    close_dx += boid_a_transform.translation.x - boid_b_transform.translation.x;
-                    close_dy += boid_a_transform.translation.y - boid_b_transform.translation.y;
+                    close_distance += vector_between;
                 } else if squared_distance < VISUAL_RANGE_SQUARED {
-                    xpos_avg += boid_b_transform.translation.x;
-                    ypos_avg += boid_b_transform.translation.y;
-                    xvel_avg += boid_b.vx;
-                    yvel_avg += boid_b.vy;
+                    pos_avg += boid_b_transform.translation;
+                    vel_avg += boid_b.velocity;
 
                     neighboring_boids += 1.;
                 }
             }
         }
 
-        let mut new_vx = boid_a.vx;
-        let mut new_vy = boid_a.vy;
+        let mut new_velocity = boid_a.velocity;
 
         if neighboring_boids > 0. {
-            xpos_avg = xpos_avg / neighboring_boids;
-            ypos_avg = ypos_avg / neighboring_boids;
-            xvel_avg = xvel_avg / neighboring_boids;
-            yvel_avg = yvel_avg / neighboring_boids;
+            pos_avg /= neighboring_boids;
+            vel_avg = vel_avg / neighboring_boids;
 
-            new_vx += boid_a.vx
-                + (xpos_avg - boid_a_transform.translation.x) * CENTERING_FACTOR
-                + (xvel_avg - boid_a.vx) * MATCHING_FACTOR;
-
-            new_vy += boid_a.vy
-                + (ypos_avg - boid_a_transform.translation.y) * CENTERING_FACTOR
-                + (yvel_avg - boid_a.vy) * MATCHING_FACTOR;
+            new_velocity += new_velocity
+                + (pos_avg - boid_a_transform.translation) * CENTERING_FACTOR
+                + (vel_avg - new_velocity) * MATCHING_FACTOR;
         }
 
-        new_vx += close_dx * AVOID_FACTOR;
-        new_vy += close_dy * AVOID_FACTOR;
+        new_velocity += close_distance * AVOID_FACTOR;
 
         if boid_a_transform.translation.x < LEFT_MARGIN {
-            new_vx += TURN_FACTOR
+            new_velocity += Vec3::new(TURN_FACTOR, 0., 0.);
         }
         if boid_a_transform.translation.x > window.width() - RIGHT_MARGIN {
-            new_vx -= TURN_FACTOR
+            new_velocity -= Vec3::new(TURN_FACTOR, 0., 0.);
         }
         if boid_a_transform.translation.y < TOP_MARGIN {
-            new_vy += TURN_FACTOR
+            new_velocity += Vec3::new(0., TURN_FACTOR, 0.);
         }
         if boid_a_transform.translation.y > window.height() - BOTTOM_MARGIN {
-            new_vy -= TURN_FACTOR
+            new_velocity -= Vec3::new(0., TURN_FACTOR, 0.);
         }
 
-        let mut movement_vector = Vec3::new(new_vx, new_vy, 0.);
+        let mut movement_vector = new_velocity;
         let speed = movement_vector.length();
 
         if speed < MIN_SPEED {
@@ -212,8 +196,7 @@ fn move_boids(
             .expect("All boids should have a movement vector in the map");
 
         boid_transform.translation += movement_vector;
-        boid.vx = movement_vector.x;
-        boid.vy = movement_vector.y;
+        boid.velocity = movement_vector;
 
         boid_transform.rotation = Quat::from_rotation_arc(Vec3::Y, movement_vector.normalize());
     }
