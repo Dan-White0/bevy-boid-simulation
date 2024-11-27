@@ -34,7 +34,9 @@ const MIN_SPEED: f32 = 3.;
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
+        .init_resource::<RunSimulation>()
         .add_systems(Startup, (spawn_camera, spawn_boids))
+        .add_systems(Update, start_stop)
         .add_systems(FixedUpdate, move_boids)
         .run();
 }
@@ -114,7 +116,12 @@ fn spawn_boids(
 fn move_boids(
     mut boid_query: Query<(&mut Transform, Entity, &mut Boid)>,
     window_query: Query<&Window, With<PrimaryWindow>>,
+    run_simulation: ResMut<RunSimulation>,
 ) {
+    if !run_simulation.0 {
+        return;
+    }
+
     let window = window_query.get_single().unwrap();
     let mut movement_vectors: HashMap<Entity, Vec3> = HashMap::new();
 
@@ -209,5 +216,22 @@ fn move_boids(
         boid.vy = movement_vector.y;
 
         boid_transform.rotation = Quat::from_rotation_arc(Vec3::Y, movement_vector.normalize());
+    }
+}
+
+#[derive(Resource, Debug)]
+pub struct RunSimulation(bool);
+impl Default for RunSimulation {
+    fn default() -> Self {
+        Self(false)
+    }
+}
+
+pub fn start_stop(
+    keyboard_input: Res<ButtonInput<KeyCode>>,
+    mut run_simulation: ResMut<RunSimulation>,
+) {
+    if keyboard_input.just_pressed(KeyCode::Space) {
+        run_simulation.0 = !run_simulation.0;
     }
 }
