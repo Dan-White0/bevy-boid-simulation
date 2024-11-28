@@ -34,24 +34,6 @@ pub fn get_title_text_style(asset_server: &Res<AssetServer>) -> TextStyle {
     }
 }
 
-pub const LABEL_STYLE: Style = {
-    let mut style = Style::DEFAULT;
-    style.flex_direction = FlexDirection::Row;
-    style.justify_content = JustifyContent::Center;
-    style.align_items = AlignItems::Center;
-    style.width = Val::Px(240.0);
-    style.height = Val::Px(70.0);
-    style
-};
-
-pub fn get_label_text_style(asset_server: &Res<AssetServer>) -> TextStyle {
-    TextStyle {
-        font: asset_server.load("fonts/FiraSans-Bold.ttf"),
-        font_size: 32.0,
-        color: Color::WHITE,
-    }
-}
-
 pub const BUTTON_STYLE: Style = {
     let mut style = Style::DEFAULT;
     style.justify_content = JustifyContent::Center;

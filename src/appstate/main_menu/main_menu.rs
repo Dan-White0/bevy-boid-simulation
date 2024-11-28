@@ -35,7 +35,7 @@ pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>)
                     // Text
                     parent.spawn(TextBundle::from_section(
                         "Bevy Boids Simulation!",
-                        get_title_text_style(&asset_server),
+                        get_title_text_style(asset_server),
                     ));
                 });
 
