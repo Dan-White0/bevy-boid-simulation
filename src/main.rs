@@ -63,11 +63,10 @@ fn spawn_boids(
             .spawn((
                 MaterialMesh2dBundle {
                     mesh: meshes
-                        .add(Triangle2d::new(
-                            Vec2::new(-BOID_WIDTH / 2., -BOID_HEIGHT / 2.),
-                            Vec2::new(0., BOID_HEIGHT / 2.),
-                            Vec2::new(BOID_WIDTH / 2., -BOID_HEIGHT / 2.),
-                        ))
+                        .add(Cone {
+                            radius: BOID_WIDTH / 2.,
+                            height: BOID_HEIGHT,
+                        })
                         .into(),
                     material: materials.add(ColorMaterial::from(Color::srgb(52., 216., 235.))),
                     transform: Transform::from_xyz(random_x, random_y, 0.)
