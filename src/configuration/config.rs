@@ -10,7 +10,7 @@ pub const RIGHT_MARGIN: f32 = 75.;
 pub const LEFT_MARGIN: f32 = 75.;
 pub const TOP_MARGIN: f32 = 75.;
 pub const BOTTOM_MARGIN: f32 = 75.;
-pub const TURN_FACTOR: f32 = 0.5;
+pub const TURN_FACTOR: f32 = 2.;
 
 pub const BOID_VIEW_ANGLE_RAD: f32 = std::f32::consts::PI * 3. / 4.;
 pub const VISUAL_RANGE: f32 = 80.;
