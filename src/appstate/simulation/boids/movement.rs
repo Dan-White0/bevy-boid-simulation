@@ -2,9 +2,9 @@ use bevy::prelude::*;
 use bevy::utils::HashMap;
 use bevy::window::PrimaryWindow;
 
+use super::super::RunSimulation;
 use super::Boid;
 use crate::configuration::config;
-use crate::RunSimulation;
 
 pub fn move_boids(
     mut boid_query: Query<(&mut Transform, Entity, &mut Boid)>,
