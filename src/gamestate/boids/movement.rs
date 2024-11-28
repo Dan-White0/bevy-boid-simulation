@@ -3,23 +3,8 @@ use bevy::utils::HashMap;
 use bevy::window::PrimaryWindow;
 
 use super::Boid;
+use crate::configuration::config;
 use crate::RunSimulation;
-
-const LEFT_MARGIN: f32 = 75.;
-const RIGHT_MARGIN: f32 = 75.;
-const TOP_MARGIN: f32 = 75.;
-const BOTTOM_MARGIN: f32 = 75.;
-
-const TURN_FACTOR: f32 = 0.5;
-const VISUAL_RANGE: f32 = 80.;
-const VISUAL_RANGE_SQUARED: f32 = VISUAL_RANGE * VISUAL_RANGE;
-const PROTECTED_RANGE: f32 = 20.;
-const PROTECTED_RANGE_SQUARED: f32 = PROTECTED_RANGE * PROTECTED_RANGE;
-const CENTERING_FACTOR: f32 = 0.005;
-const AVOID_FACTOR: f32 = 0.075;
-const MATCHING_FACTOR: f32 = 0.2;
-const MAX_SPEED: f32 = 6.;
-const MIN_SPEED: f32 = 3.;
 
 pub fn move_boids(
     mut boid_query: Query<(&mut Transform, Entity, &mut Boid)>,
@@ -47,12 +32,14 @@ pub fn move_boids(
 
             let vector_between = boid_a_transform.translation - boid_b_transform.translation;
 
-            if vector_between.x.abs() < VISUAL_RANGE && vector_between.y.abs() < VISUAL_RANGE {
+            if vector_between.x.abs() < config::VISUAL_RANGE
+                && vector_between.y.abs() < config::VISUAL_RANGE
+            {
                 let squared_distance = vector_between.distance_squared(Vec3::ZERO);
 
-                if squared_distance < PROTECTED_RANGE_SQUARED {
+                if squared_distance < config::PROTECTED_RANGE_SQUARED {
                     close_distance += vector_between;
-                } else if squared_distance < VISUAL_RANGE_SQUARED {
+                } else if squared_distance < config::VISUAL_RANGE_SQUARED {
                     pos_avg += boid_b_transform.translation;
                     vel_avg += boid_b.velocity;
 
@@ -68,33 +55,33 @@ pub fn move_boids(
             vel_avg /= neighboring_boids;
 
             new_velocity += new_velocity
-                + (pos_avg - boid_a_transform.translation) * CENTERING_FACTOR
-                + (vel_avg - new_velocity) * MATCHING_FACTOR;
+                + (pos_avg - boid_a_transform.translation) * config::CENTERING_FACTOR
+                + (vel_avg - new_velocity) * config::MATCHING_FACTOR;
         }
 
-        new_velocity += close_distance * AVOID_FACTOR;
+        new_velocity += close_distance * config::AVOID_FACTOR;
 
-        if boid_a_transform.translation.x < LEFT_MARGIN {
-            new_velocity += Vec3::new(TURN_FACTOR, 0., 0.);
+        if boid_a_transform.translation.x < config::LEFT_MARGIN {
+            new_velocity += Vec3::new(config::TURN_FACTOR, 0., 0.);
         }
-        if boid_a_transform.translation.x > window.width() - RIGHT_MARGIN {
-            new_velocity -= Vec3::new(TURN_FACTOR, 0., 0.);
+        if boid_a_transform.translation.x > window.width() - config::RIGHT_MARGIN {
+            new_velocity -= Vec3::new(config::TURN_FACTOR, 0., 0.);
         }
-        if boid_a_transform.translation.y < TOP_MARGIN {
-            new_velocity += Vec3::new(0., TURN_FACTOR, 0.);
+        if boid_a_transform.translation.y < config::TOP_MARGIN {
+            new_velocity += Vec3::new(0., config::TURN_FACTOR, 0.);
         }
-        if boid_a_transform.translation.y > window.height() - BOTTOM_MARGIN {
-            new_velocity -= Vec3::new(0., TURN_FACTOR, 0.);
+        if boid_a_transform.translation.y > window.height() - config::BOTTOM_MARGIN {
+            new_velocity -= Vec3::new(0., config::TURN_FACTOR, 0.);
         }
 
         let mut movement_vector = new_velocity;
         let speed = movement_vector.length();
 
-        if speed < MIN_SPEED {
-            movement_vector *= MIN_SPEED / speed;
+        if speed < config::MIN_SPEED {
+            movement_vector *= config::MIN_SPEED / speed;
         }
-        if speed > MAX_SPEED {
-            movement_vector *= MAX_SPEED / speed;
+        if speed > config::MAX_SPEED {
+            movement_vector *= config::MAX_SPEED / speed;
         }
 
         movement_vectors.insert(boid_a_entity, movement_vector);

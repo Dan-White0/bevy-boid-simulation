@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 
+mod configuration;
 mod gamestate;
 mod view;
 
