@@ -1,4 +1,4 @@
-use super::components::{MainMenu, QuitButton, StartButton};
+use super::components::{MainMenu, QuitButton, Start2DButton, Start3DButton};
 use bevy::prelude::*;
 
 use super::styles::{
@@ -39,7 +39,7 @@ pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>)
                     ));
                 });
 
-            // ------ Start Button ------
+            // ------ Start 2D Simulation Button ------
             parent
                 .spawn((
                     ButtonBundle {
@@ -47,11 +47,28 @@ pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>)
                         background_color: NORMAL_BUTTON_COLOUR.into(),
                         ..default()
                     },
-                    StartButton {},
+                    Start2DButton {},
                 ))
                 .with_children(|parent| {
                     parent.spawn(TextBundle::from_section(
-                        "Start Simulation",
+                        "Start 2D Simulation",
+                        get_button_text_style(asset_server),
+                    ));
+                });
+
+            // ------ Start 3D Simulation Button ------
+            parent
+                .spawn((
+                    ButtonBundle {
+                        style: BUTTON_STYLE,
+                        background_color: NORMAL_BUTTON_COLOUR.into(),
+                        ..default()
+                    },
+                    Start3DButton {},
+                ))
+                .with_children(|parent| {
+                    parent.spawn(TextBundle::from_section(
+                        "Start 3D Simulation",
                         get_button_text_style(asset_server),
                     ));
                 });

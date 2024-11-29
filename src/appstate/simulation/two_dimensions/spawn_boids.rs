@@ -5,7 +5,7 @@ use rand::prelude::*;
 
 use crate::configuration::config;
 
-use super::super::Boid;
+use super::Boid;
 
 pub fn spawn_boids_2d(
     mut commands: Commands,

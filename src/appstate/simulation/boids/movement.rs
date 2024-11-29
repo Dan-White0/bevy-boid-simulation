@@ -73,6 +73,12 @@ pub fn move_boids(
         if boid_a_transform.translation.y > window.height() - config::BOTTOM_MARGIN {
             new_velocity -= Vec3::new(0., config::TURN_FACTOR, 0.);
         }
+        if boid_a_transform.translation.z < config::DISTANT_MARGIN {
+            new_velocity += Vec3::new(0., 0., config::TURN_FACTOR);
+        }
+        if boid_a_transform.translation.y > window.height() - config::CLOSE_MARGIN {
+            new_velocity -= Vec3::new(0., config::TURN_FACTOR, 0.);
+        }
 
         let mut movement_vector = new_velocity;
         let speed = movement_vector.length();

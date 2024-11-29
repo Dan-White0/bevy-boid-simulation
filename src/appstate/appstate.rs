@@ -4,5 +4,6 @@ use bevy::prelude::*;
 pub enum AppState {
     #[default]
     MainMenu,
-    Simulation,
+    Simulation2D,
+    Simulation3D,
 }
