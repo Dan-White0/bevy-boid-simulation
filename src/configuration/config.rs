@@ -4,7 +4,7 @@ pub const BOID_HEIGHT: f32 = 3. * BOID_SIZE_SCALE;
 pub const BOID_WIDTH: f32 = 2. * BOID_SIZE_SCALE;
 
 // Simulation settings
-pub const NUMBER_OF_BOIDS: usize = 200;
+pub const NUMBER_OF_BOIDS: usize = 300;
 
 pub const RIGHT_MARGIN: f32 = 75.;
 pub const LEFT_MARGIN: f32 = 75.;

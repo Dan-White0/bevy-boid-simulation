@@ -1,5 +1,4 @@
 use bevy::prelude::*;
-use bevy::sprite::{MaterialMesh2dBundle, Mesh2dHandle};
 use bevy::window::PrimaryWindow;
 use rand::prelude::*;
 
@@ -11,7 +10,7 @@ pub fn spawn_boids_2d(
     mut commands: Commands,
     window_query: Query<&Window, With<PrimaryWindow>>,
     mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<ColorMaterial>>,
+    mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
     let window = window_query.get_single().unwrap();
 
@@ -22,14 +21,14 @@ pub fn spawn_boids_2d(
 
         commands
             .spawn((
-                MaterialMesh2dBundle {
+                PbrBundle {
                     mesh: meshes
                         .add(Cone {
                             radius: config::BOID_WIDTH / 2.,
                             height: config::BOID_HEIGHT,
                         })
                         .into(),
-                    material: materials.add(ColorMaterial::from(Color::srgb(52., 216., 235.))),
+                    material: materials.add(Color::srgb(52., 216., 235.)),
                     transform: Transform::from_xyz(random_x, random_y, 0.)
                         .with_rotation(Quat::from_rotation_z(random_rotation)),
                     ..default()
@@ -39,15 +38,15 @@ pub fn spawn_boids_2d(
                 },
             ))
             .with_children(|parent| {
-                let view_cone = Mesh2dHandle(meshes.add(CircularSector::new(
+                let view_cone = meshes.add(CircularSector::new(
                     config::VISUAL_RANGE,
                     config::BOID_VIEW_ANGLE_RAD,
-                )));
+                ));
 
-                parent.spawn(MaterialMesh2dBundle {
+                parent.spawn(PbrBundle {
                     mesh: view_cone,
-                    material: materials.add(ColorMaterial::from(Color::srgb(0., 255., 0.))),
-                    transform: Transform::from_xyz(0., 0., -1.),
+                    material: materials.add(Color::srgb(0., 255., 0.)),
+                    transform: Transform::from_xyz(0., 0., 0. - 1.),
                     visibility: match config::SHOW_VIEW_CONE {
                         true => Visibility::Visible,
                         false => Visibility::Hidden,
@@ -55,14 +54,14 @@ pub fn spawn_boids_2d(
                     ..default()
                 });
 
-                let avoid_cone = Mesh2dHandle(meshes.add(CircularSector::new(
+                let avoid_cone = meshes.add(CircularSector::new(
                     config::PROTECTED_RANGE,
                     config::BOID_VIEW_ANGLE_RAD,
-                )));
-                parent.spawn(MaterialMesh2dBundle {
+                ));
+                parent.spawn(PbrBundle {
                     mesh: avoid_cone,
-                    material: materials.add(ColorMaterial::from(Color::srgb(255., 0., 0.))),
-                    transform: Transform::from_xyz(0., 0., -0.5),
+                    material: materials.add(Color::srgb(255., 0., 0.)),
+                    transform: Transform::from_xyz(0., 0., 0. - 0.5),
                     visibility: match config::SHOW_VIEW_CONE {
                         true => Visibility::Visible,
                         false => Visibility::Hidden,
