@@ -22,12 +22,10 @@ pub fn spawn_boids_2d(
         commands
             .spawn((
                 PbrBundle {
-                    mesh: meshes
-                        .add(Cone {
-                            radius: config::BOID_WIDTH / 2.,
-                            height: config::BOID_HEIGHT,
-                        })
-                        .into(),
+                    mesh: meshes.add(Cone {
+                        radius: config::BOID_WIDTH / 2.,
+                        height: config::BOID_HEIGHT,
+                    }),
                     material: materials.add(Color::srgb(52., 216., 235.)),
                     transform: Transform::from_xyz(random_x, random_y, 0.)
                         .with_rotation(Quat::from_rotation_z(random_rotation)),

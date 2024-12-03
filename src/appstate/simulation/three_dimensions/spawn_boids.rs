@@ -15,9 +15,7 @@ pub fn spawn_boids_3d(
     let window = window_query.get_single().unwrap();
 
     commands.spawn(PbrBundle {
-        mesh: meshes
-            .add(Cuboid::new(window.width(), window.width(), window.width()))
-            .into(),
+        mesh: meshes.add(Cuboid::new(window.width(), window.width(), window.width())),
         material: materials.add(Color::srgba_u8(255, 255, 255, 60)),
         transform: Transform::from_xyz(
             window.width() / 2.,
@@ -36,12 +34,10 @@ pub fn spawn_boids_3d(
 
         commands.spawn((
             PbrBundle {
-                mesh: meshes
-                    .add(Cone {
-                        radius: config::BOID_WIDTH / 2.,
-                        height: config::BOID_HEIGHT,
-                    })
-                    .into(),
+                mesh: meshes.add(Cone {
+                    radius: config::BOID_WIDTH / 2.,
+                    height: config::BOID_HEIGHT,
+                }),
                 material: materials.add(Color::srgb(52., 216., 235.)),
                 transform: Transform::from_xyz(random_x, random_y, random_z).with_rotation(
                     Quat::from_rotation_arc(
